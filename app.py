@@ -444,7 +444,7 @@ elif tab == "Données Similaires":
                 st.download_button(
                     label="Télécharger le résultat",
                     data=output,
-                    file_name="Résultat_Données_Similaires.xlsx",
+                    file_name="Powerapp Dictionnaire des données BU Colissimo.xlsx",
                     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 )
             except Exception as e:

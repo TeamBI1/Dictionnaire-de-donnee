@@ -359,17 +359,28 @@ def main():
         st.header('Notice d\'utilisation')
         st.write("""
         Bienvenue dans l'outil de traitement des données.
-
+        
         **Comment utiliser cet outil :**
-
+        
         1. **Processus ETL** : Cette étape vous permet de transformer vos fichiers "Powerapp Dictionnaire des données BU Colissimo" et "Source Dictionnaire des données BU Colissimo". Veuillez préparer ces deux fichiers avant de continuer. 
         Trouvable ici : 
         - Fichier Powerapp : https://laposte.sharepoint.com/sites/CatalogueDataBUColissimo/Documents%20partages/Forms/AllItems.aspx?FolderCTID=0x01200022620E9D45DCBC4783431EA5B3F34F1A&id=%2Fsites%2FCatalogueDataBUColissimo%2FDocuments%20partages%2FGeneral%2FPowerAPP
+        """)
+        
+        st.image("Image_PA/powerapp.PNG", caption="Une belle image", use_column_width=True)
+        
+        st.write("""
         - Fichier Source : https://laposte.sharepoint.com/sites/CatalogueDataBUColissimo/Documents%20partages/Forms/AllItems.aspx?FolderCTID=0x01200022620E9D45DCBC4783431EA5B3F34F1A&id=%2Fsites%2FCatalogueDataBUColissimo%2FDocuments%20partages%2FGeneral%2FSource%20Catalogue%20Data&viewid=80713eb7%2Da4d4%2D4803%2D93e5%2D315fb27322ed
+        """)
+        
+        st.image("Image_PA/Source.PNG", caption="Une belle image", use_column_width=True)
+        
+        st.write("""
         2. **Données Similaires** : Après avoir exécuté le processus ETL, vous pourrez traiter les données similaires.
-
+        
         Utilisez les boutons **Suivant** et **Retour** ou les onglets de navigation pour parcourir les différentes étapes.
         """)
+
 
     elif st.session_state.page_index == 1:
         # Page 2 : Processus ETL

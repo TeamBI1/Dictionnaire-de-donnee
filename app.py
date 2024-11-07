@@ -66,9 +66,6 @@ def process_table_data(df_powerapp, df_source):
     logging.info("Fin du traitement de la table DATA")
     return dftest
 
-
-
-
 def process_po_data(df_source):
     logging.info("Début du traitement de la table PO DATA")
     df2 = df_source[['PO Data']].copy()
@@ -87,7 +84,6 @@ def process_po_data(df_source):
 
     logging.info("Fin du traitement de la table PO DATA")
     return df_drop
-
 
 def process_prompt_data(df_source):
     df2 = df_source[['Ecran de sélection /prompt ']].copy()
@@ -133,7 +129,6 @@ def process_rapport_prompt(df5, df_source):
     merged_df_Prompt = pd.merge(df_Rapport_Prompt3, df5, on='Prompt')
 
     return merged_df_Prompt
-
 
 def process_rapport_data(merged_df_Prompt, df_source):
     df_Rapport = df_source
@@ -183,9 +178,6 @@ def process_rapport_data_2(df_Rapport, df_data):
     # Filtrage des valeurs non nulles
     df_rapport_data_exploded = df_rapport_data_exploded[df_rapport_data_exploded['DATA'].notnull() & (df_rapport_data_exploded['DATA'] != '')]
 
-    # Suppression des valeurs indésirables (si nécessaire)
-    # df_rapport_data_exploded = df_rapport_data_exploded[df_rapport_data_exploded['DATA'] != 'pdd']
-
     # Nettoyage de df_data
     df_data['DATA'] = df_data['DATA'].astype(str).str.strip().str.lower()
 
@@ -204,7 +196,6 @@ def process_rapport_data_2(df_Rapport, df_data):
 
     return df_Rapport_data_final
 
-
 def process_axe_temps(df_source):
     df_Axe_Temps = df_source[['Axe temps du rapport']].drop_duplicates().reset_index(drop=True)
 
@@ -219,7 +210,6 @@ def process_axe_temps(df_source):
 
     return df_Axe_Temps
 
-
 def process_rapport_part2(df_Rapport, df_Axe_Temps, df_po_data):
     merged_Rapport = pd.merge(df_Rapport, df_po_data, on='PO Data', how='left')
     merged_Rapport2 = pd.merge(merged_Rapport, df_Axe_Temps, on='Axe temps du rapport', how='left')
@@ -227,7 +217,6 @@ def process_rapport_part2(df_Rapport, df_Axe_Temps, df_po_data):
     merged_Rapport2.columns = merged_Rapport2.columns.map(str)
 
     return merged_Rapport2
-
 
 # code du type kpi ou maille d'analyse
 def process_kpi_and_maille(df_source):
@@ -251,7 +240,6 @@ def process_kpi_and_maille(df_source):
     df_final = pd.DataFrame(combined_list, columns=['DATA', 'Type']).drop_duplicates()
 
     return df_final
-
 
 def create_excel_with_tables(all_dataframes, filename='fichier_transforme.xlsx'):
     output = BytesIO()
@@ -309,12 +297,7 @@ def create_excel_with_tables_from_sheets(sheets, filename='Résultat_Données_Si
     output.seek(0)
     return output
 
-
-
-
-
-def main(df_powerapp, df_source):
-
+def main_etl(df_powerapp, df_source):
     df_data = process_table_data(df_powerapp, df_source)
     df_po_data = process_po_data(df_source)
     df5 = process_prompt_data(df_source)
@@ -354,104 +337,138 @@ def process_similar_data(df_data):
     logging.info("Fin du traitement des données similaires")
     return df_data
 
+def main():
+    st.title('Traitement des Données')
 
-# Fonction pour télécharger un fichier
-def download_button(object_to_download, download_filename, button_text):
-    output = BytesIO()
-    with pd.ExcelWriter(output, engine='openpyxl') as writer:
-        for sheet_name, df in object_to_download.items():
-            df.to_excel(writer, sheet_name=sheet_name, index=False)
-    output.seek(0)
-    b64 = base64.b64encode(output.read()).decode()
-    href = f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="{download_filename}">{button_text}</a>'
-    return st.markdown(href, unsafe_allow_html=True)
+    # Liste des pages
+    pages = ['Notice d\'utilisation', 'Processus ETL', 'Données Similaires']
 
-# Code Streamlit
-st.title('Traitement des Données')
+    # Initialiser l'index de la page actuelle dans la session
+    if 'page_index' not in st.session_state:
+        st.session_state.page_index = 0
 
-tab = st.radio("Choisissez une option:", ["Processus ETL", "Données Similaires"])
+    # Créer les onglets de navigation (boutons radio)
+    # Le rendu des onglets doit se faire AVANT les boutons pour maintenir la synchronisation
+    selected_page = st.radio("Navigation", pages, index=st.session_state.page_index)
 
-if tab == "Processus ETL":
-    st.header('Transformation des fichiers Dictionnaire des données')
+    # Si l'utilisateur sélectionne une page différente via les onglets
+    if selected_page != pages[st.session_state.page_index]:
+        st.session_state.page_index = pages.index(selected_page)
 
-    uploaded_files = st.file_uploader("Choisissez les fichiers Excel", type=['xlsx'], accept_multiple_files=True, key="etl_files")
+    # Afficher le contenu de la page actuelle
+    if st.session_state.page_index == 0:
+        # Page 1 : Notice d'utilisation
+        st.header('Notice d\'utilisation')
+        st.write("""
+        Bienvenue dans l'outil de traitement des données.
 
-    if uploaded_files and len(uploaded_files) == 2:
-        files_dict = {
-            "Powerapp Dictionnaire des données BU Colissimo": None,
-            "Source Dictionnaire des données BU Colissimo": None
-        }
+        **Comment utiliser cet outil :**
 
-        for uploaded_file in uploaded_files:
-            if 'Powerapp' in uploaded_file.name:
-                files_dict["Powerapp Dictionnaire des données BU Colissimo"] = uploaded_file
-            elif 'Source' in uploaded_file.name:
-                files_dict["Source Dictionnaire des données BU Colissimo"] = uploaded_file
+        1. **Processus ETL** : Cette étape vous permet de transformer vos fichiers "Powerapp Dictionnaire des données BU Colissimo" et "Source Dictionnaire des données BU Colissimo". Veuillez préparer ces deux fichiers avant de continuer.
+        2. **Données Similaires** : Après avoir exécuté le processus ETL, vous pourrez traiter les données similaires.
 
-        if None not in files_dict.values():
-            if st.button('Exécuter le processus ETL'):
+        Utilisez les boutons **Suivant** et **Retour** ou les onglets de navigation pour parcourir les différentes étapes.
+        """)
+
+    elif st.session_state.page_index == 1:
+        # Page 2 : Processus ETL
+        st.header('Transformation des fichiers Dictionnaire des données')
+
+        uploaded_files = st.file_uploader("Choisissez les fichiers Excel", type=['xlsx'], accept_multiple_files=True, key="etl_files")
+
+        if uploaded_files and len(uploaded_files) == 2:
+            files_dict = {
+                "Powerapp Dictionnaire des données BU Colissimo": None,
+                "Source Dictionnaire des données BU Colissimo": None
+            }
+
+            for uploaded_file in uploaded_files:
+                if 'Powerapp' in uploaded_file.name:
+                    files_dict["Powerapp Dictionnaire des données BU Colissimo"] = uploaded_file
+                elif 'Source' in uploaded_file.name:
+                    files_dict["Source Dictionnaire des données BU Colissimo"] = uploaded_file
+
+            if None not in files_dict.values():
+                if st.button('Exécuter le processus ETL'):
+                    try:
+                        df_powerapp = pd.read_excel(files_dict["Powerapp Dictionnaire des données BU Colissimo"], sheet_name='Table DATA')
+                        df_source = pd.read_excel(files_dict["Source Dictionnaire des données BU Colissimo"])
+
+                        # Appel de la fonction main_etl pour exécuter le processus ETL complet
+                        all_dataframes = main_etl(df_powerapp, df_source)
+
+                        st.success("Le processus ETL a été exécuté avec succès.")
+
+                        # Utiliser la nouvelle fonction pour créer le fichier Excel avec les tableaux formatés
+                        output = create_excel_with_tables(all_dataframes)
+
+                        # Bouton de téléchargement
+                        st.download_button(
+                            label="Télécharger le fichier transformé",
+                            data=output,
+                            file_name="fichier_transforme.xlsx",
+                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                        )
+                    except Exception as e:
+                        st.error(f"Une erreur s'est produite : {str(e)}")
+            else:
+                st.error("Les fichiers téléchargés ne correspondent pas aux fichiers requis. Veuillez vérifier les noms des fichiers.")
+        else:
+            st.info("Veuillez télécharger exactement deux fichiers : 'Powerapp Dictionnaire des données BU Colissimo' et 'Source Dictionnaire des données BU Colissimo'.")
+
+    elif st.session_state.page_index == 2:
+        # Page 3 : Données Similaires
+        st.header('Traitement des Données Similaires')
+
+        etl_result_file = st.file_uploader("Choisissez le fichier résultat de l'ETL", type=['xlsx'], key="etl_result_file")
+
+        if etl_result_file:
+            if st.button('Traiter les données similaires'):
                 try:
-                    df_powerapp = pd.read_excel(files_dict["Powerapp Dictionnaire des données BU Colissimo"], sheet_name='Table DATA')
-                    df_source = pd.read_excel(files_dict["Source Dictionnaire des données BU Colissimo"])
+                    # Lire toutes les feuilles du fichier Excel
+                    xls = pd.ExcelFile(etl_result_file)
+                    sheets = {sheet_name: pd.read_excel(xls, sheet_name) for sheet_name in xls.sheet_names}
 
-                    # Appel de la fonction main pour exécuter le processus ETL complet
-                    all_dataframes = main(df_powerapp, df_source)
-
-                    st.success("Le processus ETL a été exécuté avec succès.")
+                    if 'Table_DATA' in sheets:
+                        sheets['Table_DATA'] = process_similar_data(sheets['Table_DATA'])
+                        st.success("Le traitement des données similaires a été effectué avec succès.")
+                    else:
+                        st.error("La feuille 'Table_DATA' n'existe pas dans le fichier.")
+                        st.stop()
 
                     # Utiliser la nouvelle fonction pour créer le fichier Excel avec les tableaux formatés
-                    output = create_excel_with_tables(all_dataframes)
+                    output = create_excel_with_tables_from_sheets(sheets)
 
-                    # Bouton de téléchargement
                     st.download_button(
-                        label="Télécharger le fichier transformé",
+                        label="Télécharger le résultat",
                         data=output,
-                        file_name="fichier_transforme.xlsx",
+                        file_name="Powerapp Dictionnaire des données BU Colissimo.xlsx",
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                     )
                 except Exception as e:
                     st.error(f"Une erreur s'est produite : {str(e)}")
         else:
-            st.error("Les fichiers téléchargés ne correspondent pas aux fichiers requis. Veuillez vérifier les noms des fichiers.")
-    else:
-        st.info("Veuillez télécharger exactement deux fichiers : 'Powerapp Dictionnaire des données BU Colissimo' et 'Source Dictionnaire des données BU Colissimo'.")
+            st.info("Veuillez télécharger le fichier résultat de l'ETL pour le traitement des données similaires.")
 
+    # Boutons Retour et Suivant en bas de la page
+    # Pour maintenir la synchronisation, nous devons gérer les clics des boutons AVANT de rendre les onglets
+    # Pour ce faire, nous allons utiliser des callbacks via des fonctions
 
+    def on_click_prev():
+        if st.session_state.page_index > 0:
+            st.session_state.page_index -= 1
 
+    def on_click_next():
+        if st.session_state.page_index < len(pages) - 1:
+            st.session_state.page_index += 1
 
-elif tab == "Données Similaires":
-    st.header('Traitement des Données Similaires')
-    
-    etl_result_file = st.file_uploader("Choisissez le fichier résultat de l'ETL", type=['xlsx'], key="etl_result_file")
-    
-    if etl_result_file:
-        if st.button('Traiter les données similaires'):
-            try:
-                # Lire toutes les feuilles du fichier Excel
-                xls = pd.ExcelFile(etl_result_file)
-                sheets = {sheet_name: pd.read_excel(xls, sheet_name) for sheet_name in xls.sheet_names}
-                
-                if 'Table_DATA' in sheets:
-                    sheets['Table_DATA'] = process_similar_data(sheets['Table_DATA'])
-                    st.success("Le traitement des données similaires a été effectué avec succès.")
-                else:
-                    st.error("La feuille 'Table_DATA' n'existe pas dans le fichier.")
-                    st.stop()
-                
-                # Utiliser la nouvelle fonction pour créer le fichier Excel avec les tableaux formatés
-                output = create_excel_with_tables_from_sheets(sheets)
-                
-                st.download_button(
-                    label="Télécharger le résultat",
-                    data=output,
-                    file_name="Powerapp Dictionnaire des données BU Colissimo.xlsx",
-                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                )
-            except Exception as e:
-                st.error(f"Une erreur s'est produite : {str(e)}")
-    else:
-        st.info("Veuillez télécharger le fichier résultat de l'ETL pour le traitement des données similaires.")
+    # Afficher les boutons en bas de la page
+    col1, col2 = st.columns([1, 1])
 
+    with col1:
+        st.button('Retour', on_click=on_click_prev, disabled=(st.session_state.page_index == 0))
+    with col2:
+        st.button('Suivant', on_click=on_click_next, disabled=(st.session_state.page_index == len(pages) - 1))
 
 if __name__ == "__main__":
-    pass
+    main()

@@ -434,8 +434,9 @@ def main():
     elif st.session_state.page_index == 2:
         # Page 3 : Données Similaires
         st.header('Traitement des Données Similaires')
-
-        etl_result_file = st.file_uploader("Choisissez le fichier résultat de l'ETL", type=['xlsx'], key="etl_result_file")
+         st.write("""
+        Une fois l’étape 1 terminée, téléchargez le fichier puis remplissez la description des nouvelles données. Une fois cela terminé, vous pouvez joindre le fichier ci-dessous pour ajouter les données similaires.        """)
+        etl_result_file = st.file_uploader("Choisissez le fichier transforme ", type=['xlsx'], key="etl_result_file")
 
         if etl_result_file:
             if st.button('Traiter les données similaires'):
@@ -463,7 +464,7 @@ def main():
                 except Exception as e:
                     st.error(f"Une erreur s'est produite : {str(e)}")
         else:
-            st.info("Veuillez télécharger le fichier résultat de l'ETL pour le traitement des données similaires.")
+            st.info("N’oubliez pas de remplir les descriptions des données avant de télécharger le fichier résultat de l’ETL pour le traitement des données similaires.")
 
 
 

@@ -376,7 +376,10 @@ def main():
         st.image("Image_PA/Source.PNG", caption="Une belle image", use_column_width=True)
         
         st.write("""
-        2. **Données Similaires** : Après avoir exécuté le processus ETL, vous pourrez traiter les données similaires.
+        2. **Données Similaires** : Après avoir exécuté le processus ETL, il faut remplir les descriptions des nouvelles données. Ensuite, vous pourrez passer à l’étape de traitement des données similaires.
+
+
+        3. **Fin** : Une fois toute l’étape 2 terminée, téléchargez le fichier et placez-le dans le dossier suivant : https://laposte.sharepoint.com/sites/CatalogueDataBUColissimo/Documents%20partages/Forms/AllItems.aspx?FolderCTID=0x01200022620E9D45DCBC4783431EA5B3F34F1A&id=%2Fsites%2FCatalogueDataBUColissimo%2FDocuments%20partages%2FGeneral%2FPowerAPP&viewid=80713eb7%2Da4d4%2D4803%2D93e5%2D315fb27322ed
         
         Utilisez les boutons **Suivant** et **Retour** ou les onglets de navigation pour parcourir les différentes étapes.
         """)

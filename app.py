@@ -464,7 +464,7 @@ def main():
                 except Exception as e:
                     st.error(f"Une erreur s'est produite : {str(e)}")
         else:
-            st.info("N’oubliez pas de remplir les descriptions des données avant de télécharger le fichier résultat de l’ETL pour le traitement des données similaires.")
+            st.info("N’oubliez pas de remplir les descriptions des données avant de télécharger le fichier transforme pour le traitement des données similaires.")
 
 
 

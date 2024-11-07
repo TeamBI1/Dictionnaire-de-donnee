@@ -347,15 +347,13 @@ def main():
     if 'page_index' not in st.session_state:
         st.session_state.page_index = 0
 
-    # Créer les onglets de navigation (boutons radio)
-    # Le rendu des onglets doit se faire AVANT les boutons pour maintenir la synchronisation
+
     selected_page = st.radio("Navigation", pages, index=st.session_state.page_index)
 
     # Si l'utilisateur sélectionne une page différente via les onglets
     if selected_page != pages[st.session_state.page_index]:
         st.session_state.page_index = pages.index(selected_page)
 
-    # Afficher le contenu de la page actuelle
     if st.session_state.page_index == 0:
         # Page 1 : Notice d'utilisation
         st.header('Notice d\'utilisation')
@@ -364,7 +362,10 @@ def main():
 
         **Comment utiliser cet outil :**
 
-        1. **Processus ETL** : Cette étape vous permet de transformer vos fichiers "Powerapp Dictionnaire des données BU Colissimo" et "Source Dictionnaire des données BU Colissimo". Veuillez préparer ces deux fichiers avant de continuer.
+        1. **Processus ETL** : Cette étape vous permet de transformer vos fichiers "Powerapp Dictionnaire des données BU Colissimo" et "Source Dictionnaire des données BU Colissimo". Veuillez préparer ces deux fichiers avant de continuer. 
+        Trouvable ici : 
+        - Fichier Powerapp : https://laposte.sharepoint.com/sites/CatalogueDataBUColissimo/Documents%20partages/Forms/AllItems.aspx?FolderCTID=0x01200022620E9D45DCBC4783431EA5B3F34F1A&id=%2Fsites%2FCatalogueDataBUColissimo%2FDocuments%20partages%2FGeneral%2FPowerAPP
+        - Fichier Source : https://laposte.sharepoint.com/sites/CatalogueDataBUColissimo/Documents%20partages/Forms/AllItems.aspx?FolderCTID=0x01200022620E9D45DCBC4783431EA5B3F34F1A&id=%2Fsites%2FCatalogueDataBUColissimo%2FDocuments%20partages%2FGeneral%2FSource%20Catalogue%20Data&viewid=80713eb7%2Da4d4%2D4803%2D93e5%2D315fb27322ed
         2. **Données Similaires** : Après avoir exécuté le processus ETL, vous pourrez traiter les données similaires.
 
         Utilisez les boutons **Suivant** et **Retour** ou les onglets de navigation pour parcourir les différentes étapes.
@@ -450,9 +451,7 @@ def main():
         else:
             st.info("Veuillez télécharger le fichier résultat de l'ETL pour le traitement des données similaires.")
 
-    # Boutons Retour et Suivant en bas de la page
-    # Pour maintenir la synchronisation, nous devons gérer les clics des boutons AVANT de rendre les onglets
-    # Pour ce faire, nous allons utiliser des callbacks via des fonctions
+
 
     def on_click_prev():
         if st.session_state.page_index > 0:

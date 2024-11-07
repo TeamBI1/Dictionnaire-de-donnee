@@ -434,7 +434,7 @@ def main():
     elif st.session_state.page_index == 2:
         # Page 3 : Données Similaires
         st.header('Traitement des Données Similaires')
-         st.write("""
+        st.write("""
         Une fois l’étape 1 terminée, téléchargez le fichier puis remplissez la description des nouvelles données. Une fois cela terminé, vous pouvez joindre le fichier ci-dessous pour ajouter les données similaires.        """)
         etl_result_file = st.file_uploader("Choisissez le fichier transforme ", type=['xlsx'], key="etl_result_file")
 
